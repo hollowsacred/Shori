@@ -1,11 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CategoryMenView from "../views/CategoryMenView.vue";
+import  CategoryMenProductListView  from "../views/CategoryMenProductListView";
+
 import CategoryWomenView from "../views/CategoryWomenView.vue";
 import CategoryKidsView from "../views/CategoryKidsView.vue";
 import CategoryView from '../views/CategoryView';
 import CartView from '../views/CartView.vue';
 import AuthView from '../views/AuthView.vue';
+import RegistrationView from '../views/RegistrationView.vue';
+
 const routes = [
   {
     path: '/',
@@ -21,6 +25,13 @@ const routes = [
         path:'formen',
         name:'formen',
         component:CategoryMenView,
+        children: [
+          {
+            path:':category',
+            name:'categoryitem',
+            component:CategoryMenProductListView,
+          },
+        ]
       },
       {
         path:'forwomen',
@@ -43,6 +54,11 @@ const routes = [
     path:'/auth',
     name:'auth',
     component:AuthView,
+  },
+  {
+    path:'/reg',
+    name:'reg',
+    component:RegistrationView,
   }
   
   

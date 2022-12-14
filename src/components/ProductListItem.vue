@@ -1,47 +1,111 @@
 <template>
-  <li @mouseenter="(isActive = true)" @mouseleave="(isActive = false)" class="product-list__item">
-    <div class="product-list__item-info">
-      <v-img :src="img" class="product-list__item-img"/>
-      <div class="product-list__item-body">
-        <div class="product-list__item-prices">
-          <div class="product-list__item-price"> {{price}} Руб</div>
-          <div class="product-list__item-price product-list__item-price--old">{{oldPrice}} Руб</div>
+  <li
+    
+    class="product-list__item"
+  >
+    <div @mouseenter="isActive = true"
+    @mouseleave="isActive = false">
+      <div class="product-list__item-info">
+        <v-img cover :src="props.type ? dataItem.img : srcImg" class="product-list__item-img" />
+
+        <div class="product-list__item-body">
+          <div class="product-list__item-prices">
+            <div class="product-list__item-price">{{ dataItem.price }} Руб</div>
+            <div class="product-list__item-price product-list__item-price--old">
+              {{ dataItem.oldPrice }} Руб
+            </div>
+          </div>
+          <div class="product-list__item-title">{{ dataItem.title }}</div>
         </div>
-        <div class="product-list__item-title">{{title}}</div>
+      </div>
+      <div>
+        <div class="product-list__item-buy" v-if="isActive">
+          <div class="product-list__item-buy-row-1">
+            <div class="product-list__item-counts">
+              <div
+                @click="count === 0 ? count : count--"
+                class="product-list__item-counts-minus minus"
+              >
+                <v-icon>mdi-minus</v-icon>
+              </div>
+              <div class="product-list__item-counts-count">{{ count }}</div>
+              <div @click="count++" class="product-list__item-counts-plus plus">
+                <v-icon>mdi-plus</v-icon>
+              </div>
+            </div>
+            <button class="product-list__item-button">В корзину</button>
+          </div>
+          <div v-if="isAdmin" class="product-list__item-buy-row-2">
+            <v-btn @click="isChange = true" block variant="flat">Изменить</v-btn>
+            <v-btn @click="deleteItem" block color="error" variant="flat"
+              >Удалить</v-btn
+            >
+          </div>
+        </div>
       </div>
     </div>
-    
-      <div  class="product-list__item-buy" v-if="isActive">
-        <div class="product-list__item-counts">
-          <div @click="count === 0 ? count : count-- " class="product-list__item-counts-minus minus"><v-icon>mdi-minus</v-icon></div>
-          <div class="product-list__item-counts-count">{{count}}</div>
-          <div @click="count++" class="product-list__item-counts-plus plus"><v-icon>mdi-plus</v-icon></div>
-        </div>
-        <button class="product-list__item-button">В корзину</button>
-      </div>
-   
+    <div v-if="isChange" class="product-list__item-change">
+      <v-text-field v-model="changedItem.price" variant="underlined" label="Цена"></v-text-field>
+      <v-text-field v-model="changedItem.oldPrice" variant="underlined" label="Старая цена"></v-text-field>
+      <v-text-field v-model="changedItem.title" variant="underlined" label="Описание"></v-text-field>
+      <v-btn @click="changeItem" class="mb-5" block variant="outlined" color="green">Изменить</v-btn>
+      <v-btn @click="isChange = false" block variant="outlined" color="error">Закрыть</v-btn>
+    </div>
   </li>
 </template>
 
 <script>
-import { ref, toRefs } from 'vue';
-
+import { ref, toRefs, reactive, computed } from "vue";
+import { useStore } from "vuex";
+import { deleteProductItem } from "../http/fetchProduct.js";
 export default {
   props: {
     data: {
-     type: Object,
+      type: Object,
+    },
+    type: {
+      type: String,
     }
   },
-  setup (props) {
+  setup(props) {
+    const store = useStore();
     const isActive = ref(false);
+    const isChange = ref(false);
     const count = ref(0);
-    const {id,img,title, price, oldPrice} = toRefs(props.data);  
+    const { data: dataItem, type } = toRefs(props);
+
+    const srcImg = `http://localhost:5000/static/${dataItem.value.img}`;
+    const changedItem = reactive({
+       ...dataItem.value
+    });
+
     const changeActive = () => {
       isActive.value = true;
+    };
+
+    const changeItem = () => {
+      isChange.value = false;
+      if (type.value) {
+      store.commit('homeStore/changeItem',{item:dataItem.value, changedItem: changedItem , type: type.value});
+      }
+      else {
+        store.commit('productStore/changeItem',{item:dataItem.value, changedItem: changedItem});
+      }
     }
-    return {id, img, title, price, oldPrice, isActive, changeActive, count}
-  }
-}
+    
+    const deleteItem = () => {
+      if (type.value) {
+        store.commit("homeStore/deleteItem", {item: dataItem.value, type: type.value});
+      }
+      else {
+        store.dispatch('productStore/deleteItem', deleteProductItem(dataItem.value.id));
+      }
+    };
+    const isAdmin = computed(() => store.getters['authStore/getIsAdmin']);
+
+    return { dataItem, isActive, isChange, changeActive, count, deleteItem, changeItem, changedItem, isAdmin, props, srcImg };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -51,33 +115,48 @@ export default {
   width: 220px;
   min-height: 379px;
   transition: all 0.2s ease;
-  z-index: 5;
+  &-change {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    z-index: 999;
+    background-color: rgba(233, 233, 233, 0.904);
+  }
   &-buy {
     display: flex;
+    flex-direction: column;
     width: 100%;
-    height: 50px;
+    min-height: 50px;
     position: absolute;
-    z-index: 1;
-    background-color: white;
-    border-top-width: 0;
+    z-index: 999;
     border: 1px solid rgba(0, 0, 0, 0.233);
+    &-row-1 {
+      display: flex;
+      flex: 1 0 50px;
+    }
+    &-row-2 {
+    }
   }
   &-counts {
     flex: 1 0;
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background-color: rgba(119, 119, 119, 0.233); 
+    background-color: rgb(228, 228, 228);
     div {
       font-size: 15px;
     }
   }
 
-  .minus, .plus {
+  .minus,
+  .plus {
     color: rgba(0, 0, 0, 0.363);
     :hover {
       cursor: pointer;
-      color:black;
+      color: black;
     }
   }
   &-button {
@@ -97,16 +176,15 @@ export default {
   &-prices {
     display: flex;
     align-items: center;
-    gap:15px;
+    gap: 15px;
     margin-bottom: 10px;
   }
   &-body {
-    
     padding: 10px;
   }
   &-img {
     margin-bottom: 20px;
+    height: 290px;
   }
-
 }
 </style>

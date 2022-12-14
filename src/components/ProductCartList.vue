@@ -1,11 +1,11 @@
 <template>
   <ul class="product-list">
-    <ProductListItem v-for="item in props.data" :key="item.id" :data="item" :type="props.type"/>
+    <ProductCartListItem class="mb-6" v-for="item in props.data" :key="item.id" :data="item" :type="props.type"/>
   </ul>
 </template>
 
 <script>
-import ProductListItem from './ProductListItem.vue';
+import ProductCartListItem from './ProductCartListItem.vue';
 
 export default {
   props:{
@@ -22,15 +22,13 @@ export default {
     setup(props) {
         return {props};
     },
-    components: { ProductListItem,}
+    components: { ProductCartListItem }
 }
 </script>
 
 <style lang="scss" scoped>
   .product-list {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 20px;
+    padding-top: 20px;
+    flex:1 0;
   }
 </style>

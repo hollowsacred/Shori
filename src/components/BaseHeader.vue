@@ -2,14 +2,13 @@
   <header class="header">
     <div class="container header__row">
       <nav class="header-nav-links">
-        <router-link to="/category/formen">Мужчинам</router-link>
+        <router-link :to="{ name: 'formen' }">Мужчинам</router-link>
         <v-divider vertical />
-        <router-link to="/category/forwomen">Женщинам</router-link>
+        <router-link :to="{ name: 'forwomen' }">Женщинам</router-link>
         <v-divider vertical />
-        <router-link exact to="/category/forkids">Детям</router-link>
+        <router-link :to="{ name: 'forkids' }">Детям</router-link>
       </nav>
       <router-link to="/" class="header__logo">
-        
         <img
           height="60"
           :src="require('../assets/LogoCompany.png')"
@@ -20,19 +19,40 @@
         <router-link to="/cart">
           <v-icon>mdi-cart</v-icon>
         </router-link>
-        <router-link to="/auth">
+
+        <router-link v-if="!isAuth" to="/auth">
           <v-icon>mdi-account</v-icon>
           Вход \ Регистрация
         </router-link>
+        <v-chip class="chip" link variant="outlined" v-else
+          >Вы вошли как: {{ isAdmin ? "Админ" : "Пользователь" }}</v-chip
+        >
+        <div @click="logoutFromAccount">
+          <v-chip class="chip" link color="error" v-if="isAuth">Выйти</v-chip>
+        </div>
       </div>
     </div>
   </header>
 </template>
 
 <script>
+import { useStore } from 'vuex';
+import { computed } from "vue";
+import { useRouter } from 'vue-router';
 export default {
   setup() {
-    return {};
+    const store = useStore();
+    const router = useRouter();
+    const isAuth = computed(() => store.getters['authStore/getAuth']);
+    const isAdmin = computed(() => store.getters['authStore/getIsAdmin']);
+    
+    const logoutFromAccount = () => {
+      store.commit('authStore/setAuth',false);
+      store.commit('authStore/setIsAdmin',false);
+      router.push({path:'/'});
+    }
+
+    return {isAuth, isAdmin, logoutFromAccount};
   },
 };
 </script>
@@ -53,10 +73,9 @@ export default {
     a {
       color: #999;
       &:hover {
-        color:black;
+        color: black;
       }
     }
-    
   }
   .header-nav-links {
     display: flex;
@@ -70,6 +89,9 @@ export default {
         background-color: rgba(128, 128, 128, 0.151);
       }
     }
+  }
+  .chip {
+    user-select: none;
   }
 }
 </style>
