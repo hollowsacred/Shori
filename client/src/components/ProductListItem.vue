@@ -1,12 +1,12 @@
 <template>
-  <li
-    
-    class="product-list__item"
-  >
-    <div @mouseenter="isActive = true"
-    @mouseleave="isActive = false">
+  <li class="product-list__item">
+    <div @mouseenter="isActive = true" @mouseleave="isActive = false">
       <div class="product-list__item-info">
-        <v-img cover :src="props.type ? dataItem.img : srcImg" class="product-list__item-img" />
+        <v-img
+          cover
+          :src="props.type ? dataItem.img : srcImg"
+          class="product-list__item-img"
+        />
 
         <div class="product-list__item-body">
           <div class="product-list__item-prices">
@@ -33,10 +33,12 @@
                 <v-icon>mdi-plus</v-icon>
               </div>
             </div>
-            <button class="product-list__item-button">В корзину</button>
+            <v-btn :loading="isLoading" :disabled="isLoading" @click="addToCart" color="green" variant="flat" height="50">В корзину</v-btn>
           </div>
           <div v-if="isAdmin" class="product-list__item-buy-row-2">
-            <v-btn @click="isChange = true" block variant="flat">Изменить</v-btn>
+            <v-btn @click="isChange = true" block variant="flat"
+              >Изменить</v-btn
+            >
             <v-btn @click="deleteItem" block color="error" variant="flat"
               >Удалить</v-btn
             >
@@ -45,16 +47,38 @@
       </div>
     </div>
     <div v-if="isChange" class="product-list__item-change">
-      <v-text-field v-model="changedItem.price" variant="underlined" label="Цена"></v-text-field>
-      <v-text-field v-model="changedItem.oldPrice" variant="underlined" label="Старая цена"></v-text-field>
-      <v-text-field v-model="changedItem.title" variant="underlined" label="Описание"></v-text-field>
-      <v-btn @click="changeItem" class="mb-5" block variant="outlined" color="green">Изменить</v-btn>
-      <v-btn @click="isChange = false" block variant="outlined" color="error">Закрыть</v-btn>
+      <v-text-field
+        v-model="changedItem.price"
+        variant="underlined"
+        label="Цена"
+      ></v-text-field>
+      <v-text-field
+        v-model="changedItem.oldPrice"
+        variant="underlined"
+        label="Старая цена"
+      ></v-text-field>
+      <v-text-field
+        v-model="changedItem.title"
+        variant="underlined"
+        label="Описание"
+      ></v-text-field>
+      <v-btn
+        @click="changeItem"
+        class="mb-5"
+        block
+        variant="outlined"
+        color="green"
+        >Изменить</v-btn
+      >
+      <v-btn @click="isChange = false" block variant="outlined" color="error"
+        >Закрыть</v-btn
+      >
     </div>
   </li>
 </template>
 
 <script>
+import { addItemToCart } from "@/http/fetchCart";
 import { ref, toRefs, reactive, computed } from "vue";
 import { useStore } from "vuex";
 import { deleteProductItem } from "../http/fetchProduct.js";
@@ -65,18 +89,18 @@ export default {
     },
     type: {
       type: String,
-    }
+    },
   },
   setup(props) {
     const store = useStore();
     const isActive = ref(false);
     const isChange = ref(false);
+    const isLoading = ref(false);
     const count = ref(0);
     const { data: dataItem, type } = toRefs(props);
-
     const srcImg = `http://localhost:5000/static/${dataItem.value.img}`;
     const changedItem = reactive({
-       ...dataItem.value
+      ...dataItem.value,
     });
 
     const changeActive = () => {
@@ -86,24 +110,60 @@ export default {
     const changeItem = () => {
       isChange.value = false;
       if (type.value) {
-      store.commit('homeStore/changeItem',{item:dataItem.value, changedItem: changedItem , type: type.value});
-      }
-      else {
-        store.commit('productStore/changeItem',{item:dataItem.value, changedItem: changedItem});
-      }
-    }
-    
-    const deleteItem = () => {
-      if (type.value) {
-        store.commit("homeStore/deleteItem", {item: dataItem.value, type: type.value});
-      }
-      else {
-        store.dispatch('productStore/deleteItem', deleteProductItem(dataItem.value.id));
+        store.commit("homeStore/changeItem", {
+          item: dataItem.value,
+          changedItem: changedItem,
+          type: type.value,
+        });
+      } else {
+        store.commit("productStore/changeItem", {
+          item: dataItem.value,
+          changedItem: changedItem,
+        });
       }
     };
-    const isAdmin = computed(() => store.getters['authStore/getIsAdmin']);
 
-    return { dataItem, isActive, isChange, changeActive, count, deleteItem, changeItem, changedItem, isAdmin, props, srcImg };
+    const deleteItem = () => {
+      if (type.value) {
+        store.commit("homeStore/deleteItem", {
+          item: dataItem.value,
+          type: type.value,
+        });
+      } else {
+        store.dispatch(
+          "productStore/deleteItem",
+          deleteProductItem(dataItem.value.id)
+        );
+      }
+    };
+
+    const addToCart = async () => {
+      if (type.value) {
+        return;
+      }
+      isLoading.value = true;
+      const user = store.getters['authStore/getCurrentUser'];
+      await addItemToCart(user,dataItem.value);
+      isLoading.value = false;
+      console.log(isLoading.value);
+    }
+    const isAdmin = computed(() => store.getters["authStore/getIsAdmin"]);
+
+    return {
+      dataItem,
+      isActive,
+      isChange,
+      changeActive,
+      count,
+      deleteItem,
+      changeItem,
+      changedItem,
+      isAdmin,
+      props,
+      srcImg,
+      addToCart,
+      isLoading
+    };
   },
 };
 </script>
@@ -162,6 +222,10 @@ export default {
   &-button {
     background-color: rgba(2, 185, 2, 0.842);
     padding: 0 10px;
+    transition: all 0.3s ease;
+    &:hover {
+      background-color: darken(rgba(2, 185, 2, 0.842),8);
+    }
   }
   &-info {
     border: 1px solid rgba(0, 0, 0, 0.233);

@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { RegTo } from "@/http/fetchAuth";
 import { users } from "@/mocks/mocks";
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
@@ -29,9 +30,10 @@ export default {
       role:'user',
     })
 
-    const tryToReg = () => {
+    const tryToReg = async () => {
       if (regData.login && regData.password) {
         users.push(regData);
+        await RegTo(regData);
         router.push({name:'auth'});
       }
     }

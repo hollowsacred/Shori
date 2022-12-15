@@ -17,7 +17,7 @@ export default {
     console.log(route.params);
     const store = useStore();
     store.dispatch('productStore/setClothesList', getAllProducts());
-    const sortedClothes = computed(() => store.getters['productStore/sortedClothes'](route.params.category));
+    const sortedClothes = computed(() => store.getters['productStore/sortedClothes'](route.params.category, 'man'));
     return { sortedClothes };
   },
   components: {

@@ -1,6 +1,7 @@
 export const state = () => ({
   isAuth: false,
   isAdmin: false,
+  currentUser: {name:'guest', id:4},
   loginData: {},
   regData: {},
 });
@@ -11,6 +12,9 @@ export const getters = {
   },
   getIsAdmin: state => {
     return state.isAdmin;
+  },
+  getCurrentUser: state => {
+    return state.currentUser;
   }
 };
 
@@ -20,6 +24,9 @@ export const mutations = {
   },
   setIsAdmin: (state, payload) => {
     state.isAdmin = payload;
+  },
+  setCurrentUser: (state, payload) => {
+    state.currentUser = payload
   }
 };
 
@@ -29,6 +36,10 @@ export const actions = {
   },
  async setAuth({commit}, payload) {
     commit("setAuth", await payload)
+  },
+
+  async setCurrentUser({commit}, payload) {
+    commit('currentUser',await payload)
   }
 };
 export default { namespaced: true, getters, state, mutations, actions };

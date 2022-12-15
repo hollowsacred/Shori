@@ -54,7 +54,7 @@ export default {
         console.log("ne nashel");
         return;
       }
-      
+      store.commit('authStore/setCurrentUser',user);
       store.commit("authStore/setAuth", true);
       checkRole(user);
       router.push("/");

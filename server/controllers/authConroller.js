@@ -22,6 +22,28 @@ class AuthController {
     })
    return res.status(200).json(isLogin);
   }
+
+  async tryToReg(req, res) {
+    const {body} = req;
+    console.log(body);
+    console.log(count,'fsdfsdf');
+    const user = await prisma.user.create({
+      data: {
+        login: body.login,
+        password: body.password,
+        email: body.email,
+        roleId:2,
+        basket: {
+         create: {
+
+         }
+        }
+
+           
+      }
+    });
+    res.status(200).json("Пользователь успешно добавлен!");
+  }
 }
 
 module.exports = new AuthController();

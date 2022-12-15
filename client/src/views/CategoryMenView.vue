@@ -5,13 +5,13 @@
   <v-divider class="pb-10"></v-divider>
   <div class="container position-relative">
     <div class="formen-body">
-      <BaseSidebar />
+      <BaseSidebar type="men"/>
       <div>
         <ProductSort/>
         <RouterView></RouterView>
       </div>
     </div>
-    <ModalBtn class="formen__modal-btn"/>
+    <ModalBtn v-if="isAdmin" class="formen__modal-btn"/>
   </div>
 </template>
 
@@ -19,9 +19,13 @@
 import ProductSort from "@/components/ProductSort.vue";
 import BaseSidebar from "../components/BaseSidebar.vue";
 import ModalBtn from "@/components/ModalBtn.vue";
+import { computed } from "vue";
+import { useStore } from "vuex";
 export default {
   setup() {
-    return { };
+    const store = useStore();
+    const isAdmin = computed(() => store.getters['authStore/getIsAdmin']);
+    return { isAdmin};
   },
   components: {
     BaseSidebar,

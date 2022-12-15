@@ -2,9 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CategoryMenView from "../views/CategoryMenView.vue";
 import  CategoryMenProductListView  from "../views/CategoryMenProductListView";
-
 import CategoryWomenView from "../views/CategoryWomenView.vue";
+import CategoryWomenProductListView from "../views/CategoryWomenProductListView.vue";
 import CategoryKidsView from "../views/CategoryKidsView.vue";
+import CategoryKidsProductListView from "../views/CategoryKidsProductListView.vue";
+import  CheckView  from "../views/CheckView.vue";
 import CategoryView from '../views/CategoryView';
 import CartView from '../views/CartView.vue';
 import AuthView from '../views/AuthView.vue';
@@ -28,7 +30,7 @@ const routes = [
         children: [
           {
             path:':category',
-            name:'categoryitem',
+            name:'mencategoryitem',
             component:CategoryMenProductListView,
           },
         ]
@@ -37,11 +39,25 @@ const routes = [
         path:'forwomen',
         name:'forwomen',
         component:CategoryWomenView,
+        children: [
+          {
+            path:':category',
+            name:'womencategoryitem',
+            component:CategoryWomenProductListView,
+          },
+        ]
       },
       {
         path:'forkids',
         name:'forkids',
         component:CategoryKidsView,
+        children: [
+          {
+            path:':category',
+            name:'kidscategoryitem',
+            component:CategoryKidsProductListView,
+          },
+        ]
       },
     ]
   },
@@ -59,8 +75,12 @@ const routes = [
     path:'/reg',
     name:'reg',
     component:RegistrationView,
-  }
-  
+  },
+  {
+    path:'/check',
+    name:'check',
+    component:CheckView,
+  }, 
   
 
 ]

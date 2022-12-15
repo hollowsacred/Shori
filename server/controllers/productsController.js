@@ -31,6 +31,7 @@ class ProductsController {
           price: +body.price,
           oldPrice: +body.oldPrice,
           title: body.title,
+          belongs: body.belongs,
           category: {
             connect: {
               id: +body.category,
@@ -61,11 +62,30 @@ class ProductsController {
   }
   async deleteItem(req, res) {
     const {params} = req;
+
+    await prisma.basketProduct.deleteMany({
+      where: {
+        productId: +params.id,
+
+      }
+    })
+
     const product = await prisma.product.delete({
+      include: {
+        basketProduct: {
+          select: {
+            basketId:true,
+          }
+        }
+      },
       where:{
         id:+params.id,
       }
+
     })
+    console.log(product);
+
+
     return res.status(200).json(product);
   }
 }

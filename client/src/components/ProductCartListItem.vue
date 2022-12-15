@@ -1,24 +1,24 @@
 <template>
   <li class="productcart-item mb-5">
     <div class="productcart-item__body">
-      <img class="productcart-item__img" :src="props.data.img" alt="kartinka" />
+      <img class="productcart-item__img" :src="srcImg" alt="kartinka" />
       <div class="productcart-item__description">
-        <div class="productcart-item__title">{{props.data.title}}</div>
+        <div class="productcart-item__title">{{product.title}}</div>
         <div>
-          <div>Категория: {{props.data.category}}</div>
-          <div>Количество: {{ count }}</div>
+          <div>Категория: {{product.category.name}}</div>
+          <div>Количество: {{ countRef }}</div>
         </div>
       </div>
     </div>
-    <div>
+    <div class="productcart-item-block">
       <div class="productcart-item__prices">
-        <div class="price">{{ props.data.price }}<span>Руб.</span></div>
-        <div class="old-price">{{ props.data.oldPrice }}<span>Руб</span></div>
+        <div class="price">{{ calculatedPrice(product.price) }}<span>Руб.</span></div>
+        <div class="old-price">{{ calculatedPrice(product.oldPrice)}}<span>Руб</span></div>
       </div>
       <div class="d-flex align-center justify-center counts mt-4">
-        <v-btn  @click="count > 1 ? count-- : count" density="compact" variant="outlined" height="30"><v-icon>mdi-minus</v-icon></v-btn>
-        <div class="productcart-item__count">{{count}}</div>
-        <v-btn @click="count++" density="compact" variant="outlined" height="30"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn  @click="countRef > 1 ? countRef-- : countRef" density="compact" variant="outlined" height="30"><v-icon>mdi-minus</v-icon></v-btn>
+        <div class="productcart-item__count">{{countRef}}</div>
+        <v-btn @click="countRef++" density="compact" variant="outlined" height="30"><v-icon>mdi-plus</v-icon></v-btn>
       </div>
       <div class="text-center mt-10">Только доставка</div>
     </div>
@@ -27,7 +27,9 @@
 </template>
 
 <script>
-import { ref } from "vue";
+
+import { ref, toRefs, reactive, } from "vue";
+import { useStore } from "vuex";
 export default {
   props: {
     data: {
@@ -38,13 +40,37 @@ export default {
     },
   },
   setup(props) {
-    const count = ref(props.data.count)
-    return { props, count };
+    const store = useStore();
+    const {product, count} = toRefs(props.data);
+    const srcImg = `http://localhost:5000/static/${product.value.img}`;
+    const countRef = ref(count.value);
+  
+    const calculatedPrice = (price) => {
+      if (countRef.value === 0) {
+      return  price + 0;
+      }
+
+      return price * countRef.value
+    }
+    const prices = reactive({
+      price:calculatedPrice(props.data.product.price),
+      oldPrice:calculatedPrice(props.data.product.oldPrice),
+    })
+    store.commit('cartStore/setCalculatedCartList',prices);
+
+    // watch(countRef, () => {
+    //   store.commit('cartStore/setCalculatedCartList',prices);
+    // })
+
+    return { props, count, srcImg, product, countRef, calculatedPrice, };
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.productcart-item-block {
+  padding: 20px;
+}
 .productcart-item {
   display: flex;
   justify-content: space-between;
@@ -54,6 +80,7 @@ export default {
   font-size: 18px;
   &__body {
     display: flex;
+    min-height: 197px;
   }
   &__description {
     display: flex;
@@ -64,7 +91,6 @@ export default {
   &__prices {
     display: flex;
     align-items: center;
-    padding: 20px;
     gap: 10px;
   }
   &__img {

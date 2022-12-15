@@ -1,6 +1,6 @@
 <template>
-  <ul class="product-list">
-    <ProductCartListItem class="mb-6" v-for="item in props.data" :key="item.id" :data="item" :type="props.type"/>
+  <ul  class="product-list">
+    <ProductCartListItem  v-for="item in props.data" :key="item.id" :data="{product:item.product, count: item.count}" :type="props.type"/>
   </ul>
 </template>
 

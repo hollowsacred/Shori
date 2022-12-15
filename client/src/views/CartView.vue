@@ -4,7 +4,8 @@
       <h2 class="cart__title">Оформление заказа</h2>
       <v-divider></v-divider>
       <div class="cart__body">
-        <ProductCartList :data="cartList" />
+        <ProductCartList v-if="cartList" :data="cartList" />
+        <div v-else>Корзина пустая</div>
         <TotalSum class="cart-total-sum"></TotalSum>
       </div>
       <h2 class="cart__title">Способ доставки</h2>
@@ -42,10 +43,17 @@
 
 <script>
 import ProductCartList from "@/components/ProductCartList.vue";
+import { getAllItemsCart } from "@/http/fetchCart";
+import { useStore } from "vuex";
 import TotalSum from "../components/TotalSum.vue";
-import { cartList } from "../mocks/mocks.js";
+import { computed } from "vue";
 export default {
   setup() {
+    const store = useStore();
+      const currentUser = computed(() => store.getters['authStore/getCurrentUser']); 
+
+      store.dispatch('cartStore/setCartList', getAllItemsCart());
+      const cartList = computed(() => { return store.getters['cartStore/getFilteredCartList'](currentUser.value.id)})
     return { cartList };
   },
   components: { ProductCartList, TotalSum },

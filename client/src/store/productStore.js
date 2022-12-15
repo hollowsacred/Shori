@@ -1,11 +1,11 @@
 // import { getAllProducts } from "@/http/fetchProduct";
 // import { clothesList } from "../mocks/mocks";
 
-const filteredClothes = (state, category) => {
+const filteredClothes = (state, category, belong) => {
   if (!state.clothes) {
     return;
   }
-  return [...state.clothes].filter((item) => item.category.name === category);
+  return [...state.clothes].filter((item) => item.category.name === category && item.belongs === belong);
 };
 export const state = () => ({
   clothes: null,
@@ -20,13 +20,13 @@ export const getters = {
     return state.clothes;
   },
 
-  sortedClothes: (state) => (category) => {
+  sortedClothes: (state) => (category, belong) => {
     if (state.currentSort === "По возрастанию") {
-      return filteredClothes(state, category).sort((a, b) => b.price - a.price);
+      return filteredClothes(state, category, belong).sort((a, b) => b.price - a.price);
     } else if (state.currentSort === "По убыванию") {
-      return filteredClothes(state, category).sort((a, b) => a.price - b.price);
+      return filteredClothes(state, category, belong).sort((a, b) => a.price - b.price);
     } else {
-      return filteredClothes(state, category);
+      return filteredClothes(state, category, belong);
     }
   },
 };

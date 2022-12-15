@@ -33,9 +33,10 @@ model Product {
   oldPrice      Int
   count         Int
   img           String
+  belongs       String?
   category      Category? @relation(fields: [categoryId], references: [id])
   categoryId    Int?
-  basketProduct BasketProduct?
+  basketProduct BasketProduct[]
 }
 
 model Category {
@@ -56,5 +57,6 @@ model BasketProduct {
   product   Product? @relation(fields: [productId], references: [id])
   basket    Basket?  @relation(fields: [basketId], references: [id])
   basketId  Int?
-  productId Int? @unique
+  productId Int? 
+  count Int  @default(1)
 }

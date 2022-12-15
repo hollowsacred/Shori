@@ -8,7 +8,7 @@
 
             </v-list-item>
           </template>
-            <v-list-item :to="{name:'categoryitem', params: {category:item[0]}}" v-for="(item, index) in clothes" :key="index" :title="item[1]">
+            <v-list-item :to="{name:`${props.type}categoryitem`, params: {category:item[0]}}" v-for="(item, index) in clothes" :key="index" :title="item[1]">
   
             </v-list-item>
         </v-list-group>
@@ -18,7 +18,7 @@
 
             </v-list-item>
           </template>
-            <v-list-item :to="{name:'categoryitem', params: {category:item.category}}" v-for="item in shoes" :key="item.id" :title="item.title">
+            <v-list-item :to="{name:`${props.type}categoryitem`, params: {category:item.category}}" v-for="item in shoes" :key="item.id" :title="item.title">
   
             </v-list-item>
         </v-list-group>
@@ -28,7 +28,7 @@
 
             </v-list-item>
           </template>
-            <v-list-item :to="{name:'categoryitem', params: {category:item.category}}" v-for="item in accesories" :key="item.id" :title="item.title">
+            <v-list-item :to="{name:`${props.type}categoryitem`, params: {category:item.category}}" v-for="item in accesories" :key="item.id" :title="item.title">
   
             </v-list-item>
         </v-list-group>
@@ -41,8 +41,12 @@
 <script>
 import { ref } from "vue";
 export default {
-
-  setup() {
+  props:{
+    type: {
+      type: String,
+    }
+  },
+  setup(props) {
     const open = ref(['Одежда']);
     const clothes = ref([['outerwear','Верхняя одежда'],['pants','Брюки'],['jumper','Джемперы'],['jeans','Джинсы'],['home-clothes','Домашняя одежда'],['costume','Пиджаки и костюмы'],['shorts','Плавки и шорты для плавания'], ['hoodie','Толстовки и свитшоты']]);
     const shoes = ref([
@@ -99,7 +103,7 @@ export default {
         category:'tie',
       },
     ])
-    return {open, clothes, shoes, accesories};
+    return {open, clothes, shoes, accesories, props};
   },
 };
 </script>

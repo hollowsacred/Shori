@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="modal" width="400" height="400">
+    <v-card class="modal" width="400" height="500">
       <v-form @submit.prevent>
         <h3 class="mb-5 text-center">Добавить товар</h3>
 
@@ -40,9 +40,17 @@
           item-value="value"
           variant="underlined"
         ></v-select>
+
+        <v-select v-model="dataItem.belongs"
+          label="Принадлежность"
+          :items="belongsCategory"
+          item-title="title"
+          item-value="value"
+          variant="underlined"
+        ></v-select>
+
         <div class="d-flex justify-space-between align-center">
           <v-btn @click="addItem()" type="submit" color="green">Добавить</v-btn>
-          <div>Товаров 5 / 5</div>
         </div>
         <div @click="$emit('close')" class="modal__close">X</div>
       </v-form>
@@ -73,7 +81,13 @@ export default {
       File: [],
       count:0,
       category:'',
+      belongs:'',
     });
+    const belongsCategory = ref([
+      {title:'Мужчина', value:'man'},
+      {title:'Жещина', value:'woman'},
+      {title:'Ребенок', value:'kid'},
+    ])
     const itemsCategory =  ref([
       {title:'Верхняя одежда', value:'1'},
       {title:'Брюки', value:'2'},
@@ -97,7 +111,7 @@ export default {
     const formData = new FormData();
     const required = (v) => !!v || "Введите данные";
     const addItem = async () => {
-      if (!dataItem.title && !dataItem.price && !dataItem.oldPrice) {
+      if (!dataItem.title && !dataItem.price && !dataItem.oldPrice && !dataItem.belongs && !dataItem.File.length == 0) {
         return;
       }
 
@@ -110,12 +124,13 @@ export default {
         formData.append('count',dataItem.count);
         formData.append('category',dataItem.category);
         formData.append('File', dataItem.File[0]);
+        formData.append('belongs', dataItem.belongs);
         store.dispatch("productStore/addItem", addProduct(formData));
       }
 
       emit("close");
     };
-    return { props, required, dataItem, addItem, itemsCategory };
+    return { props, required, dataItem, addItem, itemsCategory, belongsCategory };
   },
 };
 </script>
