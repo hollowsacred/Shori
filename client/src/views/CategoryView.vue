@@ -1,7 +1,4 @@
 <template>
-  <!-- <div>
-  Легчайшее
-  </div> -->
   <RouterView></RouterView>
 </template>
 

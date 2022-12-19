@@ -26,7 +26,6 @@ class AuthController {
   async tryToReg(req, res) {
     const {body} = req;
     console.log(body);
-    console.log(count,'fsdfsdf');
     const user = await prisma.user.create({
       data: {
         login: body.login,

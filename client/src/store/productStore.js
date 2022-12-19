@@ -1,15 +1,23 @@
 // import { getAllProducts } from "@/http/fetchProduct";
 // import { clothesList } from "../mocks/mocks";
+const searchedClothes = (state, arr) => {
+  if (!state.search) {
+    return arr;
+  }
+
+  return arr.filter(item => item.title.toLowerCase().includes(state.search.toLowerCase()));
+}
 
 const filteredClothes = (state, category, belong) => {
   if (!state.clothes) {
     return;
   }
-  return [...state.clothes].filter((item) => item.category.name === category && item.belongs === belong);
+  return searchedClothes(state, [...state.clothes].filter((item) => item.category.name === category && item.belongs === belong));
 };
 export const state = () => ({
   clothes: null,
   currentSort: "",
+  search: '',
 });
 
 export const getters = {
@@ -35,6 +43,9 @@ export const mutations = {
   setSort: (state, sort) => {
     state.currentSort = sort;
   },
+  setSearch: (state, payload) => {
+    state.search = payload;
+  },
   setClothesList: (state, payload) => {
     state.clothes = payload;
   },
@@ -47,6 +58,7 @@ export const mutations = {
   deleteItem: (state, item ) => {
     state.clothes = state.clothes.filter((elem) => elem.id !== item.id);
   },
+  
   changeItem: (state, { item, changedItem }) => {
     const index = state.clothes.findIndex((elem) => elem.id === item.id);
     state.clothes = [

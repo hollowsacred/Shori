@@ -78,8 +78,10 @@
 </template>
 
 <script>
-import { addItemToCart } from "@/http/fetchCart";
+import { addItemToCart} from "@/http/fetchCart";
+import { changeItemProduct } from "../http/fetchProduct.js";
 import { ref, toRefs, reactive, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { deleteProductItem } from "../http/fetchProduct.js";
 export default {
@@ -93,12 +95,14 @@ export default {
   },
   setup(props) {
     const store = useStore();
+    const router = useRouter();
     const isActive = ref(false);
     const isChange = ref(false);
     const isLoading = ref(false);
     const count = ref(0);
     const { data: dataItem, type } = toRefs(props);
     const srcImg = `http://localhost:5000/static/${dataItem.value.img}`;
+    const isAuth = computed(() => store.getters['authStore/getAuth']);
     const changedItem = reactive({
       ...dataItem.value,
     });
@@ -107,7 +111,7 @@ export default {
       isActive.value = true;
     };
 
-    const changeItem = () => {
+    const changeItem = async () => {
       isChange.value = false;
       if (type.value) {
         store.commit("homeStore/changeItem", {
@@ -116,6 +120,7 @@ export default {
           type: type.value,
         });
       } else {
+        await changeItemProduct(changedItem)
         store.commit("productStore/changeItem", {
           item: dataItem.value,
           changedItem: changedItem,
@@ -141,9 +146,14 @@ export default {
       if (type.value) {
         return;
       }
+      if (!isAuth.value) {
+        router.push({name:'auth'});
+        return;
+      }
       isLoading.value = true;
       const user = store.getters['authStore/getCurrentUser'];
-      await addItemToCart(user,dataItem.value);
+      const itemInfo = await addItemToCart(user,dataItem.value);
+      store.commit('cartStore/addItemCartList', itemInfo);
       isLoading.value = false;
       console.log(isLoading.value);
     }
