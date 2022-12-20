@@ -20,4 +20,15 @@ async function deleteProductItem(id) {
   return await res.json();
 }
 
-export {getAllProducts, addProduct, deleteProductItem};
+async function changeItemProduct(item) {
+  const res = await fetch(`http://localhost:5000/api/product`,{
+    method:'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body:JSON.stringify(item),
+  })
+  return await res.json();
+}
+
+export {getAllProducts, addProduct, deleteProductItem, changeItemProduct};

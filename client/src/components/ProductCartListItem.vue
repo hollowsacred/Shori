@@ -22,14 +22,16 @@
       </div>
       <div class="text-center mt-10">Только доставка</div>
     </div>
+    <v-icon @click="deleteItemCart" class="productcart-item__trash" >mdi-trash-can-outline</v-icon>
   </li>
   <v-divider class="mb-5"></v-divider>
 </template>
 
 <script>
 
-import { ref, toRefs, reactive, } from "vue";
+import { ref, toRefs, reactive, computed } from "vue";
 import { useStore } from "vuex";
+import { deleteItemFromCart } from "../http/fetchCart.js";
 export default {
   props: {
     data: {
@@ -42,9 +44,15 @@ export default {
   setup(props) {
     const store = useStore();
     const {product, count} = toRefs(props.data);
-    const srcImg = `http://localhost:5000/static/${product.value.img}`;
     const countRef = ref(count.value);
-  
+    const srcImg = `http://localhost:5000/static/${product.value.img}`;
+    const currentUser = computed(() => store.getters['authStore/getCurrentUser']); 
+    
+  const deleteItemCart = async () => {
+    await deleteItemFromCart(currentUser.value.id, product.value.id)
+    store.commit('cartStore/deleteItemFromCart',{userId: currentUser.value.id, productId: product.value.id});
+  }
+
     const calculatedPrice = (price) => {
       if (countRef.value === 0) {
       return  price + 0;
@@ -62,7 +70,7 @@ export default {
     //   store.commit('cartStore/setCalculatedCartList',prices);
     // })
 
-    return { props, count, srcImg, product, countRef, calculatedPrice, };
+    return { props, count, srcImg, product, countRef, calculatedPrice, deleteItemCart };
   },
 };
 </script>
@@ -76,8 +84,18 @@ export default {
   justify-content: space-between;
   align-items: flex-start;
   height: 200px;
+  position: relative;
   // border: 1px solid #000;
   font-size: 18px;
+  &__trash {
+    position: absolute;
+    top: -10px;
+    right: 30px;
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(153, 153, 153, 0.185);
+    }
+  }
   &__body {
     display: flex;
     min-height: 197px;
@@ -131,4 +149,5 @@ export default {
     }
   }
 }
+
 </style>

@@ -17,12 +17,14 @@
             variant="underlined"
             class="mr-5"
             :rules="[required]"
+            type="number"
           ></v-text-field>
           <v-text-field
             v-model="dataItem.oldPrice"
             label="Старая цена"
             variant="underlined"
             :rules="[required]"
+            type="number"
           ></v-text-field>
         </div>
 
@@ -111,7 +113,7 @@ export default {
     const formData = new FormData();
     const required = (v) => !!v || "Введите данные";
     const addItem = async () => {
-      if (!dataItem.title && !dataItem.price && !dataItem.oldPrice && !dataItem.belongs && !dataItem.File.length == 0) {
+      if (!dataItem.title || !dataItem.price || !dataItem.oldPrice || !dataItem.belongs || dataItem.File.length == 0) {
         return;
       }
 

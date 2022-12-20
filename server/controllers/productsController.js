@@ -88,6 +88,22 @@ class ProductsController {
 
     return res.status(200).json(product);
   }
+  async changeItemProduct(req, res) {
+    const {body} = req;
+    console.log(body);
+      await prisma.product.update({
+        where: {
+          id:+body.id,
+        },
+        data: {
+          title:body.title,
+          price:+body.price,
+          oldPrice:+body.oldPrice,
+
+        }
+      })
+      res.status(200).json('Файл изменен');
+  }
 }
 
 module.exports = new ProductsController();

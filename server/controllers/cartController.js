@@ -21,7 +21,7 @@ class CartController {
     if (findedInfo) {
       await prisma.basketProduct.update({
         where: {
-         id: findedInfo.id
+          id: findedInfo.id,
         },
         data: {
           count: findedInfo.count + 1,
@@ -36,37 +36,63 @@ class CartController {
         },
       });
     }
-    res.status(200).json('Товар добавлен');
+    const itemCart = await prisma.basketProduct.findFirst({
+      where: {
+        basketId: +body.user,
+        productId: +body.product,
+      },
+      select: {
+        id: true,
+        basketId: true,
+        count: true,
+        product: {
+          include: {
+            category: {},
+          },
+        },
+      },
+    });
+
+    res.status(200).json(itemCart);
   }
 
- async getAllItemsCart(req, res) {
+  async getAllItemsCart(req, res) {
     const itemsCart = await prisma.basketProduct.findMany({
       select: {
-        id:true,
-        basketId:true,
-        count:true,
-        product:{
+        id: true,
+        basketId: true,
+        count: true,
+        product: {
           include: {
-            category: {
-
-            }
-          }
+            category: {},
+          },
         },
-
-      }
-    })
+      },
+    });
     return res.status(200).json(itemsCart);
   }
-  async deleteItemFromCart(req, res) {
-    const {params} = req;
+
+  async clearCart(req, res) {
+    const { params } = req;
     await prisma.basketProduct.deleteMany({
-      where:{
+      where: {
         basketId: +params.id,
-      }
-    })
-    res.status(200).json('Успешно удален')
+      },
+    });
+    res.status(200).json("Успешно удален");
   }
-  
+  async deleteItem(req, res) {
+    const {params} = req;
+    console.log(params);
+      await prisma.basketProduct.deleteMany({
+        where: {
+          basketId: +params.id,
+          productId: +params.productId,
+        },
+
+      })
+      res.status(200).json("Товар удален");
+  }
 }
 
 module.exports = new CartController();

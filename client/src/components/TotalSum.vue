@@ -20,25 +20,27 @@
       <div>Картой</div>
     </div>
     <v-divider class="mb-5"></v-divider>
-    <v-btn @click="deleteItemsCart" :to="{name:'check'}" color="green" block>Оформить Заказ</v-btn>
+    <v-btn :disabled="checkList?.length < 1" @click="clearCartHandler" :to="{name:'check'}" color="green" block>Оформить Заказ</v-btn>
   </v-card>
 </template>
 
 <script>
 import { useStore } from 'vuex';
 import { computed,} from "vue";
-import { deleteItemFromCart } from "../http/fetchCart.js";
+import { clearCart } from "../http/fetchCart.js";
 export default {
   setup() {
     const store = useStore();
     
-    const checkList = computed(() => store.getters['cartStore/getCartList']);
-    const user = store.getters['authStore/getCurrentUser'];
-    const deleteItemsCart = async () => {
-      await deleteItemFromCart(user.id)
+    const currentUser = computed(() => store.getters['authStore/getCurrentUser']); 
+    const checkList = computed(() => { return store.getters['cartStore/getFilteredCartList'](currentUser.value.id)})
+    const clearCartHandler = async () => {
+      await clearCart(currentUser.value.id)
+      store.commit('cartStore/setCartList', null);
+      store.commit('cartStore/clearCalculatedCartList');
     }
     const totalCost = computed(() => {
-        let cost = 0;
+      let cost = 0;
         if (checkList.value) {
           checkList.value.forEach((item) => cost += item.product.price * item.count);
       
@@ -55,7 +57,7 @@ export default {
         return discount;
     })
   
-    return {totalCost, discount, checkList, deleteItemsCart};
+    return {totalCost, discount, checkList, clearCartHandler};
   },
 };
 </script>

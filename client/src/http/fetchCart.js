@@ -16,11 +16,20 @@ async function getAllItemsCart() {
   return await res.json();
 }
 
-async function deleteItemFromCart(id) {
-  const res = await fetch(`http://localhost:5000/api/cart/${id}`,{
+async function clearCart(id) {
+  const res = await fetch(`http://localhost:5000/api/cart/allclear/${id}`,{
     method:'DELETE',
   })
   return await res.json();
 }
 
-module.exports = {addItemToCart, getAllItemsCart, deleteItemFromCart};
+async function deleteItemFromCart(id, productId) {
+  const res = await fetch(`http://localhost:5000/api/cart/${id}/${productId}`,{
+    method:'DELETE',
+  })
+  return await res.json();
+}
+
+
+
+module.exports = {addItemToCart, getAllItemsCart, clearCart, deleteItemFromCart,};

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CategoryMenView from "../views/CategoryMenView.vue";
 import  CategoryMenProductListView  from "../views/CategoryMenProductListView";
@@ -11,6 +11,7 @@ import CategoryView from '../views/CategoryView';
 import CartView from '../views/CartView.vue';
 import AuthView from '../views/AuthView.vue';
 import RegistrationView from '../views/RegistrationView.vue';
+
 
 const routes = [
   {
@@ -65,6 +66,9 @@ const routes = [
     path:'/cart',
     name:'cart',
     component:CartView,
+    beforeEnter: (to, from) => {
+      console.log(from);
+    }
   }, 
   {
     path:'/auth',

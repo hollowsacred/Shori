@@ -6,8 +6,11 @@
   <div class="container position-relative">
     <div class="formen-body">
       <BaseSidebar type="women"/>
-      <div>
-        <ProductSort/>
+      <div class="flex-grow-1">
+        <div class="d-flex  justify-space-between">
+          <ProductSort/>
+          <v-text-field v-model="search" class="formen__search"  density="compact" variant="outlined" label="Поиск"></v-text-field>
+        </div>
         <RouterView></RouterView>
       </div>
     </div>
@@ -19,13 +22,18 @@
 import ProductSort from "@/components/ProductSort.vue";
 import BaseSidebar from "../components/BaseSidebar.vue";
 import ModalBtn from "@/components/ModalBtn.vue";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { useStore } from "vuex";
 export default {
   setup() {
     const store = useStore();
+    const search = ref('');
+    store.commit('productStore/setSearch', '');
+    watch(search, (newSearch) => {
+      store.commit('productStore/setSearch', newSearch);
+    })
     const isAdmin = computed(() => store.getters['authStore/getIsAdmin']);
-    return { isAdmin};
+    return { isAdmin, search};
   },
   components: {
     BaseSidebar,
@@ -45,10 +53,15 @@ export default {
     gap: 10px;
   }
 }
+.formen__search {
+  max-width: 290px;
+  max-height: 40px;
+}
 .formen__modal-btn {
   top:inherit;
   right: -200px;
 }
+
 .formen__title {
   font-size: 30px;
   margin-bottom: 45px;
