@@ -30,6 +30,22 @@ async function deleteItemFromCart(id, productId) {
   return await res.json();
 }
 
+async function setCountItemCart(item, count, user) {
+  const res = await fetch('http://localhost:5000/api/count', {
+    method:'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify({
+      id: user.id,
+      productId: item.id,
+      count: count,
+      
+    })
+  });
+  return await res.json();
+}
 
 
-module.exports = {addItemToCart, getAllItemsCart, clearCart, deleteItemFromCart,};
+
+module.exports = {addItemToCart, getAllItemsCart, clearCart, deleteItemFromCart, setCountItemCart};

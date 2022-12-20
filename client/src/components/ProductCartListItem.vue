@@ -3,35 +3,52 @@
     <div class="productcart-item__body">
       <img class="productcart-item__img" :src="srcImg" alt="kartinka" />
       <div class="productcart-item__description">
-        <div class="productcart-item__title">{{product.title}}</div>
+        <div class="productcart-item__title">{{ product.title }}</div>
         <div>
-          <div>Категория: {{product.category.name}}</div>
+          <div>Категория: {{ product.category.name }}</div>
           <div>Количество: {{ countRef }}</div>
         </div>
       </div>
     </div>
     <div class="productcart-item-block">
       <div class="productcart-item__prices">
-        <div class="price">{{ calculatedPrice(product.price) }}<span>Руб.</span></div>
-        <div class="old-price">{{ calculatedPrice(product.oldPrice)}}<span>Руб</span></div>
+        <div class="price">
+          {{ calculatedPrice(product.price) }}<span>Руб.</span>
+        </div>
+        <div class="old-price">
+          {{ calculatedPrice(product.oldPrice) }}<span>Руб</span>
+        </div>
       </div>
       <div class="d-flex align-center justify-center counts mt-4">
-        <v-btn  @click="countRef > 1 ? countRef-- : countRef" density="compact" variant="outlined" height="30"><v-icon>mdi-minus</v-icon></v-btn>
-        <div class="productcart-item__count">{{countRef}}</div>
-        <v-btn @click="countRef++" density="compact" variant="outlined" height="30"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn
+          @click="countRef > 1 ? updateItemCart(--countRef) : countRef"
+          density="compact"
+          variant="outlined"
+          height="30"
+          ><v-icon>mdi-minus</v-icon></v-btn
+        >
+        <div class="productcart-item__count">{{ countRef }}</div>
+        <v-btn
+          @click="countRef >= 1 ? updateItemCart(++countRef) : countRef"
+          density="compact"
+          variant="outlined"
+          height="30"
+          ><v-icon>mdi-plus</v-icon></v-btn
+        >
       </div>
       <div class="text-center mt-10">Только доставка</div>
     </div>
-    <v-icon @click="deleteItemCart" class="productcart-item__trash" >mdi-trash-can-outline</v-icon>
+    <v-icon @click="deleteItemCart" class="productcart-item__trash"
+      >mdi-trash-can-outline</v-icon
+    >
   </li>
   <v-divider class="mb-5"></v-divider>
 </template>
 
 <script>
-
 import { ref, toRefs, reactive, computed } from "vue";
 import { useStore } from "vuex";
-import { deleteItemFromCart } from "../http/fetchCart.js";
+import { deleteItemFromCart, setCountItemCart } from "../http/fetchCart.js";
 export default {
   props: {
     data: {
@@ -43,34 +60,51 @@ export default {
   },
   setup(props) {
     const store = useStore();
-    const {product, count} = toRefs(props.data);
+    const { product, count } = toRefs(props.data);
+    console.log(product.value);
     const countRef = ref(count.value);
     const srcImg = `http://localhost:5000/static/${product.value.img}`;
-    const currentUser = computed(() => store.getters['authStore/getCurrentUser']); 
-    
-  const deleteItemCart = async () => {
-    await deleteItemFromCart(currentUser.value.id, product.value.id)
-    store.commit('cartStore/deleteItemFromCart',{userId: currentUser.value.id, productId: product.value.id});
-  }
+    const currentUser = computed(
+      () => store.getters["authStore/getCurrentUser"]
+    );
+    // const counted = computed(() => countRef.value > 1 ? countRef.value + 1 : null)
+
+    const deleteItemCart = async () => {
+      await deleteItemFromCart(currentUser.value.id, product.value.id);
+      store.commit("cartStore/deleteItemFromCart", {
+        userId: currentUser.value.id,
+        productId: product.value.id,
+      });
+    };
 
     const calculatedPrice = (price) => {
       if (countRef.value === 0) {
-      return  price + 0;
+        return price + 0;
       }
 
-      return price * countRef.value
-    }
+      return price * countRef.value;
+    };
     const prices = reactive({
-      price:calculatedPrice(props.data.product.price),
-      oldPrice:calculatedPrice(props.data.product.oldPrice),
-    })
-    store.commit('cartStore/setCalculatedCartList',prices);
+      price: calculatedPrice(props.data.product.price),
+      oldPrice: calculatedPrice(props.data.product.oldPrice),
+    });
+    store.commit("cartStore/setCalculatedCartList", prices);
 
-    // watch(countRef, () => {
-    //   store.commit('cartStore/setCalculatedCartList',prices);
-    // })
+    const updateItemCart = async (count) => {
+      store.dispatch('cartStore/updateItemCartList',{id:currentUser.value.id, productId: product.value.id, count: count});
+     await setCountItemCart(product.value, count, currentUser.value);
+    }
 
-    return { props, count, srcImg, product, countRef, calculatedPrice, deleteItemCart };
+    return {
+      props,
+      count,
+      srcImg,
+      product,
+      countRef,
+      calculatedPrice,
+      deleteItemCart,
+      updateItemCart,
+    };
   },
 };
 </script>
@@ -149,5 +183,4 @@ export default {
     }
   }
 }
-
 </style>

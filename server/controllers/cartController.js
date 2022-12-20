@@ -24,6 +24,7 @@ class CartController {
           id: findedInfo.id,
         },
         data: {
+          
           count: findedInfo.count + 1,
         },
       });
@@ -92,6 +93,20 @@ class CartController {
 
       })
       res.status(200).json("Товар удален");
+  }
+  async setCountItemCart(req, res) {
+    const { body } = req;
+    console.log(body);
+    await prisma.basketProduct.updateMany({
+      data: {
+        count: +body.count,
+      },
+      where: {
+        basketId: +body.id,
+        productId: +body.productId,
+      }    
+    })
+    res.status(200).json('Товар изменен');
   }
 }
 

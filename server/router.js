@@ -14,6 +14,7 @@ router.post('/auth', authConroller.tryToLogin);
 router.post('/reg',authConroller.tryToReg);
 router.post('/cart', cartController.addItemToCart);
 router.get('/cart', cartController.getAllItemsCart);
+router.post('/count', cartController.setCountItemCart)
 router.delete('/cart/allclear/:id', cartController.clearCart)
 router.delete('/cart/:id/:productId', cartController.deleteItem);
 module.exports = router;

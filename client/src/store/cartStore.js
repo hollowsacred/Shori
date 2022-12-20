@@ -32,8 +32,15 @@ export const mutations = {
   setCartList: (state, payload) => {
     state.cartList = payload;
   },
-
-
+  updateItemCartList: (state, {id, productId, count}) => {
+    state.cartList = state.cartList = [...state.cartList].map(item => {
+      if (item.basketId == id && item.product.id == productId) {
+          item.count = count;
+          return item;
+      }
+      return item;
+    });
+  },
 
   addItemCartList: (state, payload) => {
     const cartItem = state.cartList?.find((item) => item.id === payload.id);
@@ -70,6 +77,9 @@ export const actions = {
   async setCartList({ commit }, payload) {
     commit("setCartList", await payload);
   },
+  async updateItemCartList({commit}, payload) {
+    commit('updateItemCartList', await payload);
+  }
 };
 
 export default { namespaced: true, state, getters, mutations, actions };
