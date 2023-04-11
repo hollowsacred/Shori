@@ -1,0 +1,13 @@
+.comments {
+  &-list {
+    &__item {
+     border-bottom-left-radius: 20px;
+     border-top-right-radius: 20px;
+     border-color: gray;
+     &-like {
+      font-size: 20px;
+      cursor: pointer;
+     }
+    }
+  }
+}
