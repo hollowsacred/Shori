@@ -3,9 +3,9 @@
     <div class="productcart-item__body">
       <img class="productcart-item__img" :src="srcImg" alt="kartinka" />
       <div class="productcart-item__description">
-        <div class="productcart-item__title">{{product.title}}</div>
+        <div class="productcart-item__title">{{ product.title }}</div>
         <div>
-          <div>Категория: {{product.category.name}}</div>
+          <div>Категория: {{ product.category.name }}</div>
           <div>Количество: {{ countRef }}</div>
         </div>
       </div>
@@ -16,9 +16,9 @@
         <div class="old-price">{{ calculatedPrice(product.oldPrice)}}<span>Руб</span></div>
       </div>
       <div class="d-flex align-center justify-center counts mt-4">
-        <v-btn  @click="countRef > 1 ? countRef-- : countRef" density="compact" variant="outlined" height="30"><v-icon>mdi-minus</v-icon></v-btn>
+        <v-btn  @click="changeCalculatedPrice()" density="compact" variant="outlined" height="30"><v-icon>mdi-minus</v-icon></v-btn>
         <div class="productcart-item__count">{{countRef}}</div>
-        <v-btn @click="countRef++" density="compact" variant="outlined" height="30"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn @click="changeCalculatedPrice('plus')" density="compact" variant="outlined" height="30"><v-icon>mdi-plus</v-icon></v-btn>
       </div>
       <div class="text-center mt-10">Только доставка</div>
     </div>
@@ -64,13 +64,30 @@ export default {
       price:calculatedPrice(props.data.product.price),
       oldPrice:calculatedPrice(props.data.product.oldPrice),
     })
-    store.commit('cartStore/setCalculatedCartList',prices);
+
+    const changeCalculatedPrice = (type) => {
+      if (type === 'plus') {
+        countRef.value++;
+        prices.oldPrice = calculatedPrice(props.data.product.price);
+        prices.price = calculatedPrice(props.data.product.oldPrice);
+        store.commit('cartStore/setCalculatedCartList', {...prices, id: product.value.id});
+        return
+      }
+
+      countRef.value > 1 ? countRef.value-- : countRef.value;
+      prices.oldPrice = calculatedPrice(props.data.product.price);
+      prices.price = calculatedPrice(props.data.product.oldPrice);
+      store.commit('cartStore/setCalculatedCartList', {...prices, id: product.value.id});
+      
+    }
+
+    store.commit('cartStore/setCalculatedCartList', {...prices, id: product.value.id});
 
     // watch(countRef, () => {
     //   store.commit('cartStore/setCalculatedCartList',prices);
     // })
 
-    return { props, count, srcImg, product, countRef, calculatedPrice, deleteItemCart };
+    return { props, count, srcImg, product, countRef, calculatedPrice, deleteItemCart, changeCalculatedPrice };
   },
 };
 </script>

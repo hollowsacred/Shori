@@ -35,6 +35,7 @@ model Product {
   count         Int
   img           String
   belongs       String?
+  description   String?
   category      Category?       @relation(fields: [categoryId], references: [id])
   categoryId    Int?
   basketProduct BasketProduct[]

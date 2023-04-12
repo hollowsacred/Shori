@@ -1,4 +1,4 @@
-const fetchGetAllAdmins = async () => {
+const fetchGetAllManagers = async () => {
   const res = await fetch('http://localhost:5000/api/users');
   return await res.json();
 }
@@ -9,7 +9,7 @@ const fetchDeleteAdmin = async (id) => {
   return await res.json();
 }
 
-const fetchAddAdmin = async (data) => {
+const fetcthAddManager = async (data) => {
   const res = await fetch ('http://localhost:5000/api/users', {
     method: 'POST',
     headers: {
@@ -24,7 +24,7 @@ const fetchAddAdmin = async (data) => {
 
 
 export {
-  fetchGetAllAdmins,
+  fetchGetAllManagers,
   fetchDeleteAdmin,
-  fetchAddAdmin,
+  fetcthAddManager,
 }

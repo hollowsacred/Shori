@@ -31,9 +31,12 @@
         <v-text-field
           v-model="dataItem.title"
           :rules="[required]"
-          label="Описание"
+          label="Название"
           variant="underlined"
         ></v-text-field>
+        <v-textarea v-model="dataItem.description" label="Описание" variant="outlined">
+
+        </v-textarea>
 
         <v-select v-model="dataItem.category"
           label="Категория"
@@ -84,6 +87,7 @@ export default {
       count:0,
       category:'',
       belongs:'',
+      description:'',
     });
     const belongsCategory = ref([
       {title:'Мужчина', value:'formen'},
@@ -127,6 +131,7 @@ export default {
         formData.append('category',dataItem.category);
         formData.append('File', dataItem.File[0]);
         formData.append('belongs', dataItem.belongs);
+        formData.append('description', dataItem.description);
         store.dispatch("productStore/addItem", addProduct(formData));
       }
 

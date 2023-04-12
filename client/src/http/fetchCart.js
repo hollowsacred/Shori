@@ -1,5 +1,5 @@
 async function addItemToCart(user, product) {
-  const cartInfo = {user: user.id, product: product.id}
+  const cartInfo = { user: user.id, product: product.id, count: product.count };
   const res = await fetch('http://localhost:5000/api/cart', {
     method:'POST',
     headers: {

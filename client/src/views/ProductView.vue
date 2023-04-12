@@ -35,7 +35,7 @@
             <div class="product-item__description-title">Описание</div>
             <v-divider class="mb-5 mt-2"></v-divider>
             <div class="product-item__description">
-              Черная тостовка, хлопок, высшее качество!
+              {{ product.description }}
             </div>
           </div>
         </div>

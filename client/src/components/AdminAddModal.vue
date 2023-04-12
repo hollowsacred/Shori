@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { fetchAddAdmin } from '@/http/fetchUsers';
+import { fetcthAddManager } from '@/http/fetchUsers';
 import { computed } from '@vue/reactivity';
 import { reactive } from 'vue';
 import { useStore } from 'vuex';
@@ -50,9 +50,9 @@ export default {
         return;
       }
 
-      emit('addAdmin', {...dataItem, roleId: 1, id: adminListLength.value + 1});
+      emit('addAdmin', {...dataItem, roleId: 3, id: adminListLength.value + 1});
       emit('close');
-      await fetchAddAdmin(dataItem);
+      await fetcthAddManager(dataItem);
       
     }
     return { dataItem, required, addAdmin }

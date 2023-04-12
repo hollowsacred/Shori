@@ -65,8 +65,8 @@ export default {
       login: "",
       password: "",
     });
+    const snackbar = ref(false);
     const isSuperAdmin = computed(() => store.getters["authStore/getIsSuperAdmin"]);
-    const snackbar = ref(false)
 
     const checkRole = (user) => {
       if (user.role.name === "manager") {

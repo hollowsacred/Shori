@@ -33,6 +33,7 @@ class ProductsController {
       const fileImg = req.files.File;
       const srcImg = path.resolve("static", fileImg.name);
       fileImg.mv(srcImg);
+      console.log(body, 'дескриптион есть?')
       const product = await prisma.product.create({
         data: {
           count: +body.count,
@@ -41,6 +42,7 @@ class ProductsController {
           oldPrice: +body.oldPrice,
           title: body.title,
           belongs: body.belongs,
+          description: body.description,
           category: {
             connect: {
               id: +body.category,

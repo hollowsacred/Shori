@@ -26,9 +26,9 @@
         <div class="bold">{{ totalCost }} Руб.</div>
       </div>
       <v-divider class="mb-5"></v-divider>
-      <v-img
+      <v-img 
         :aspect-ratio="3"
-        src="http://localhost:5000/static/q-code.png"
+        :src="qrSrc"
       ></v-img>
     </v-card>
   </div>
@@ -37,21 +37,38 @@
 <script>
 import { useStore } from "vuex";
 import { computed, } from "vue";
+import { ref } from "vue";
 
 export default {
   setup() {
     const store = useStore();
     const checkList = computed(() => store.getters["cartStore/getCartList"]);
- 
     let totalCost = 0;
+    let qrSrc = ref(null);
+    
+    const getQrSrc = () => {
+        let text = ``;
+        checkList.value.forEach((item) => {
+          text += `Товар: ${item.product.title} | Количество: ${item.count} | Цена: ${item.product.price}\n`;
+        })
+
+        text += `\nИтого: ${totalCost} Руб`;
+        text = encodeURI(text);
+        return `https://api.qrserver.com/v1/create-qr-code/?data=${text}`;
+      // console.log(text);
+    }
+
     if (checkList.value) {
       checkList.value.forEach(
         (item) => (totalCost += item.product.price * item.count)
       );
+      qrSrc.value = getQrSrc();
     }
+    
     console.log(checkList.value);
     const copyCheckList = checkList.value ? [...checkList.value] : null;
-    return { checkList, totalCost, copyCheckList };
+
+    return { checkList, totalCost, copyCheckList, qrSrc,  };
   },
 };
 </script>

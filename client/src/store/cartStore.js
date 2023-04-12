@@ -24,7 +24,7 @@ export const getters = {
 
   getFilteredCartList: (state) => (id) => {
     if (!state.cartList) return;
-    return state.cartList.filter((item) => item.basketId === id);
+    return state.cartList.filter((item) => item.basket.userId === id);
   },
 };
 
@@ -32,8 +32,6 @@ export const mutations = {
   setCartList: (state, payload) => {
     state.cartList = payload;
   },
-
-
 
   addItemCartList: (state, payload) => {
     const cartItem = state.cartList?.find((item) => item.id === payload.id);
@@ -47,7 +45,8 @@ export const mutations = {
     }
 
     if (index !== -1) {
-      cartItem.count++;
+      console.log(payload.count);
+      cartItem.count = payload.count;
       return (state.cartList[index] = cartItem);
     }
 
@@ -55,14 +54,27 @@ export const mutations = {
   },
 
   deleteItemFromCart: (state, {productId, userId} ) => {
-    state.cartList = state.cartList.filter((elem) => elem.basketId == userId && elem.product.id !== productId);
+    state.cartList = state.cartList.filter((elem) => elem.basket.userId == userId && elem.product.id !== productId);
   },
 
   clearCalculatedCartList: (state) => {
     state.calculatedCartList = [];
   },
   setCalculatedCartList: (state, payload) => {
-    state.calculatedCartList.push(payload);
+    console.log(payload);
+    const elem = state.calculatedCartList.find((item) => item.id === payload.id);
+    console.log(elem);
+      if (elem) {
+        state.calculatedCartList = state.calculatedCartList.map((item) => {
+          if (item.id === payload.id) {
+            return item = payload;
+          }
+        })
+      }
+      else {
+        state.calculatedCartList.push(payload);
+      }
+    
   },
 };
 

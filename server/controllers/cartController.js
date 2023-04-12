@@ -8,13 +8,18 @@ class CartController {
   async addItemToCart(req, res) {
     const { body } = req;
     console.log(body);
+    const basket = await prisma.basket.findFirst({
+      where: {
+        userId: +body.user,
+      }
+    });
     const findedInfo = await prisma.basketProduct.findFirst({
       select: {
         count: true,
         id: true,
       },
       where: {
-        basketId: +body.user,
+        basketId: +basket.id,
         productId: +body.product,
       },
     });
@@ -24,27 +29,32 @@ class CartController {
           id: findedInfo.id,
         },
         data: {
-          count: findedInfo.count + 1,
+          count: findedInfo.count + +body.count,
         },
       });
     } else {
       await prisma.basketProduct.create({
         data: {
-          basketId: +body.user,
+          basketId: +basket.id,
           productId: +body.product,
-          count: 1,
+          count: +body.count,
         },
       });
     }
     const itemCart = await prisma.basketProduct.findFirst({
       where: {
-        basketId: +body.user,
+        basketId: +basket.id,
         productId: +body.product,
       },
       select: {
         id: true,
         basketId: true,
         count: true,
+        basket: {
+          select: {
+            userId:true,
+          }
+        },
         product: {
           include: {
             category: {},
@@ -62,6 +72,11 @@ class CartController {
         id: true,
         basketId: true,
         count: true,
+        basket: {
+          select: {
+            userId: true,
+          }
+        },
         product: {
           include: {
             category: {},
@@ -74,9 +89,16 @@ class CartController {
 
   async clearCart(req, res) {
     const { params } = req;
+
+    const basket = await prisma.basket.findFirst({
+      where: {
+        userId: +params.id,
+      }
+    });
+
     await prisma.basketProduct.deleteMany({
       where: {
-        basketId: +params.id,
+        basketId: +basket.id,
       },
     });
     res.status(200).json("Успешно удален");
@@ -84,9 +106,16 @@ class CartController {
   async deleteItem(req, res) {
     const {params} = req;
     console.log(params);
+
+    const basket = await prisma.basket.findFirst({
+      where: {
+        userId: +params.id,
+      }
+    });
+
       await prisma.basketProduct.deleteMany({
         where: {
-          basketId: +params.id,
+          basketId: +basket.id,
           productId: +params.productId,
         },
 

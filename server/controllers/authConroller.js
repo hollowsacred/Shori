@@ -26,6 +26,14 @@ class AuthController {
   async tryToReg(req, res) {
     const {body} = req;
     console.log(body);
+   const isFind = await prisma.user.findFirst({
+    where: {
+      login: body.login,
+    }
+   })
+   if (isFind) {
+    return res.status(200).json(null);
+   }
     const user = await prisma.user.create({
       data: {
         login: body.login,
@@ -41,7 +49,7 @@ class AuthController {
            
       }
     });
-    res.status(200).json("Пользователь успешно добавлен!");
+    res.status(200).json(user);
   }
 }
 

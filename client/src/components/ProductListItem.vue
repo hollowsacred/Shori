@@ -23,7 +23,7 @@
           <div class="product-list__item-buy-row-1">
             <div class="product-list__item-counts">
               <div
-                @click="count === 0 ? count : count--"
+                @click="count === 1 ? count : count--"
                 class="product-list__item-counts-minus minus"
               >
                 <v-icon>mdi-minus</v-icon>
@@ -99,7 +99,7 @@ export default {
     const isActive = ref(false);
     const isChange = ref(false);
     const isLoading = ref(false);
-    const count = ref(0);
+    const count = ref(1);
     const { data: dataItem, type } = toRefs(props);
     const srcImg = `http://localhost:5000/static/${dataItem.value.img}`;
     const isAuth = computed(() => store.getters['authStore/getAuth']);
@@ -152,7 +152,7 @@ export default {
       }
       isLoading.value = true;
       const user = store.getters['authStore/getCurrentUser'];
-      const itemInfo = await addItemToCart(user,dataItem.value);
+      const itemInfo = await addItemToCart(user,{...dataItem.value, count: count.value});
       store.commit('cartStore/addItemCartList', itemInfo);
       isLoading.value = false;
       console.log(isLoading.value);

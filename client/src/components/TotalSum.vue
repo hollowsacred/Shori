@@ -4,15 +4,15 @@
     <v-divider class="mb-5"></v-divider>
     <div class="d-flex align-center justify-space-between mb-5">
       <div>Товар на сумму</div>
-      <div>{{totalCost}} Руб</div>
+      <div>{{ totalCost }} Руб</div>
     </div>
     <div class="d-flex align-center justify-space-between mb-5">
       <div>Скидка</div>
-      <div>- {{discount}} Руб</div>
+      <div>- {{ totalCost - oldPrices }} Руб</div>
     </div>
     <div class="d-flex align-center justify-space-between mb-5">
       <div>Итог</div>
-      <div>{{totalCost}} Руб</div>
+      <div>{{ oldPrices }} Руб</div>
     </div>
     <v-divider class="mb-5"></v-divider>
     <div class="d-flex align-center justify-space-between mb-5">
@@ -34,6 +34,7 @@ export default {
     
     const currentUser = computed(() => store.getters['authStore/getCurrentUser']); 
     const checkList = computed(() => { return store.getters['cartStore/getFilteredCartList'](currentUser.value.id)})
+    const calculatedCartList = computed(() => store.getters['cartStore/getCalculatedCartList']);
     const clearCartHandler = async () => {
       await clearCart(currentUser.value.id)
       store.commit('cartStore/setCartList', null);
@@ -42,22 +43,22 @@ export default {
     const totalCost = computed(() => {
       let cost = 0;
         if (checkList.value) {
-          checkList.value.forEach((item) => cost += item.product.price * item.count);
+          calculatedCartList.value.forEach((item) => cost += item.price);
       
         }
         return cost;
     })
 
-    const discount = computed(() => {
-        let discount = 0;
-        if (checkList.value) {
-          checkList.value.forEach((item) => discount += item.product.oldPrice * item.count - item.product.price * item.count);
-         
-        }
-        return discount;
+    const oldPrices = computed(() => {
+      let oldCosts = 0;
+      calculatedCartList.value.forEach((item) => oldCosts += item.oldPrice);
+
+      return oldCosts;
     })
+
+   
   
-    return {totalCost, discount, checkList, clearCartHandler};
+    return {totalCost, checkList, clearCartHandler, oldPrices};
   },
 };
 </script>

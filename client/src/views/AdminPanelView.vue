@@ -6,7 +6,7 @@
         <h2 class="admin-panel__title">Админ Панель</h2>
         <ModalBtn>
           <template v-slot:header>
-            Добавить админа
+            Добавить менеджера
           </template>
           <AdminAddModal @addAdmin="addAdmin"/>
         </ModalBtn>
@@ -24,7 +24,7 @@
 import AdminList from '@/components/AdminList.vue';
 import ModalBtn from '@/components/ModalBtn.vue';
 import AdminAddModal from '@/components/AdminAddModal.vue';
-import { fetchGetAllAdmins } from '@/http/fetchUsers';
+import { fetchGetAllManagers } from '@/http/fetchUsers';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 // import { useRouter } from 'vue-router';
@@ -47,7 +47,7 @@ export default {
     
     onMounted(async () => {
       loading.value = true;
-      adminList.value = await fetchGetAllAdmins();
+      adminList.value = await fetchGetAllManagers();
       store.commit('setAdminListLength', adminList.value.length);
       loading.value = false;
     })

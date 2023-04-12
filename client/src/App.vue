@@ -23,12 +23,12 @@ export default {
   const store = useStore();
   const router = useRouter(); //eslint-disable-line
   const isSuperAdmin = computed(() => store.getters["authStore/getIsSuperAdmin"]); //eslint-disable-line
-  // router.beforeEach((to) => {
-  //   if (to.meta.role === 'Admin' && !isSuperAdmin.value) {
-  //     router.push('/');
-  //   }
-    
-  // })
+  router.beforeEach((to) => {
+    if (to.meta.role === 'Admin' && !isSuperAdmin.value) {
+      router.push('/');
+    }
+  })
+
   store.dispatch('cartStore/setCartList', getAllItemsCart());
   return {
   }
