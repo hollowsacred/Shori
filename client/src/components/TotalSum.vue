@@ -4,15 +4,15 @@
     <v-divider class="mb-5"></v-divider>
     <div class="d-flex align-center justify-space-between mb-5">
       <div>Товар на сумму</div>
-      <div>{{ totalCost }} Руб</div>
+      <div>{{ oldPrices }} Руб</div>
     </div>
     <div class="d-flex align-center justify-space-between mb-5">
       <div>Скидка</div>
-      <div>- {{ totalCost - oldPrices }} Руб</div>
+      <div>- {{ oldPrices - totalCost }} Руб</div>
     </div>
     <div class="d-flex align-center justify-space-between mb-5">
       <div>Итог</div>
-      <div>{{ oldPrices }} Руб</div>
+      <div>{{ totalCost }} Руб</div>
     </div>
     <v-divider class="mb-5"></v-divider>
     <div class="d-flex align-center justify-space-between mb-5">
@@ -20,7 +20,7 @@
       <div>Картой</div>
     </div>
     <v-divider class="mb-5"></v-divider>
-    <v-btn :disabled="checkList?.length < 1" @click="clearCartHandler" :to="{name:'check'}" color="green" block>Оформить Заказ</v-btn>
+    <v-btn :disabled="checkList?.length < 1 || !checkList" @click="clearCartHandler" :to="{name:'check'}" color="green" block>Оформить Заказ</v-btn>
   </v-card>
 </template>
 
@@ -34,30 +34,28 @@ export default {
     
     const currentUser = computed(() => store.getters['authStore/getCurrentUser']); 
     const checkList = computed(() => { return store.getters['cartStore/getFilteredCartList'](currentUser.value.id)})
-    const calculatedCartList = computed(() => store.getters['cartStore/getCalculatedCartList']);
+    
     const clearCartHandler = async () => {
       await clearCart(currentUser.value.id)
-      store.commit('cartStore/setCartList', null);
+      store.commit('cartStore/setCartList', []);
       store.commit('cartStore/clearCalculatedCartList');
     }
     const totalCost = computed(() => {
       let cost = 0;
-        if (checkList.value) {
-          calculatedCartList.value.forEach((item) => cost += item.price);
-      
-        }
-        return cost;
+
+      checkList.value?.forEach((item) => cost += item.product.price * item.count);
+
+      return cost;
     })
 
     const oldPrices = computed(() => {
       let oldCosts = 0;
-      calculatedCartList.value.forEach((item) => oldCosts += item.oldPrice);
+
+      checkList.value?.forEach((item) => oldCosts += item.product.oldPrice * item.count);
 
       return oldCosts;
     })
 
-   
-  
     return {totalCost, checkList, clearCartHandler, oldPrices};
   },
 };

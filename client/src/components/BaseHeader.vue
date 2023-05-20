@@ -29,7 +29,7 @@
           <v-icon>mdi-account</v-icon>
           Вход \ Регистрация
         </router-link>
-        <v-chip class="chip" link variant="outlined" v-else
+        <v-chip @click="navigateToProfile()" class="chip" link variant="outlined" v-else
           >Вы вошли как: {{isSuperAdmin ? 'Админ' : isAdmin ? "Менеджер" : "Пользователь" }}</v-chip
         >
         <div @click="logoutFromAccount">
@@ -84,7 +84,15 @@ export default {
       router.push({ path: "/" });
     };
 
-    return { isAuth, isAdmin, logoutFromAccount, cartCount, navigateToCart, isSuperAdmin };
+    const navigateToProfile = () => {
+      if (currentUser.value.id !== 2) {
+        return
+      }
+
+      router.push({name:'profile'})
+    }
+
+    return { isAuth, isAdmin, logoutFromAccount, cartCount, navigateToCart, isSuperAdmin, navigateToProfile };
   },
 };
 </script>

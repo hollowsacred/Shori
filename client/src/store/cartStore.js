@@ -62,17 +62,19 @@ export const mutations = {
   },
   setCalculatedCartList: (state, payload) => {
     console.log(payload);
-    const elem = state.calculatedCartList.find((item) => item.id === payload.id);
+    const elem = state.cartList.find((item) => item.product.id === payload.id);
     console.log(elem);
       if (elem) {
-        state.calculatedCartList = state.calculatedCartList.map((item) => {
-          if (item.id === payload.id) {
-            return item = payload;
+        state.cartList = state.cartList.map((item) => {
+          if (item.product.id === payload.id) {
+            return {...item, count: payload.count }
           }
+          
+          return item;
         })
       }
       else {
-        state.calculatedCartList.push(payload);
+        state.cartList.push(payload);
       }
     
   },

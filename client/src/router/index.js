@@ -9,6 +9,8 @@ import AuthView from '../views/AuthView.vue';
 import NotFoundView from '../views/NotFoundView.vue';
 import AdminPanelView from '../views/AdminPanelView.vue';
 import RegistrationView from '../views/RegistrationView.vue';
+import ContactView from '../views/ContactView.vue';
+import ProfileView from '../views/ProfileView.vue';
 
 
 
@@ -23,6 +25,11 @@ const routes = [
     name: 'admin',
     component: AdminPanelView,
     meta: {role: 'Admin'}
+  },
+  {
+    path:'/profile',
+    name:'profile',
+    component: ProfileView,
   },
   {
     path:'/category/:gender',
@@ -63,6 +70,19 @@ const routes = [
     path:'/check',
     name:'check',
     component:CheckView,
+  },
+  {
+    path:'/contacts',
+    name:'contacts',
+    component: ContactView,
+  },
+  {
+    path:'/vacancy',
+    name:'vacancy',
+  },
+  {
+    path: '/news',
+    name:'news',
   },
   {
     path:'/:pathMatch(.*)*',

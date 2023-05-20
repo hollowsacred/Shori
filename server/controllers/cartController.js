@@ -87,6 +87,33 @@ class CartController {
     return res.status(200).json(itemsCart);
   }
 
+  async getAllItemsCartById(req, res) {
+    const { params } = req
+    const itemsCart = await prisma.basketProduct.findMany({
+      where: {
+        basket: {
+          userId: +params.id,
+        }
+      },
+      select: {
+        id: true,
+        basketId: true,
+        count: true,
+        basket: {
+          select: {
+            userId: true,
+          }
+        },
+        product: {
+          include: {
+            category: {},
+          },
+        },
+      },
+    })
+    return res.status(200).json(itemsCart);
+  }
+
   async clearCart(req, res) {
     const { params } = req;
 

@@ -86,21 +86,26 @@ export default {
       if (!loginData.login || !loginData.password) {
         return;
       }
+
       const user = await LoginTo(loginData);
       console.log(loginData);
       console.log(user);
+
       if (!user) {
         snackbar.value = true;
         console.log("ne nashel");
         return;
       }
+
       store.commit("authStore/setCurrentUser", user);
       store.commit("authStore/setAuth", true);
       store.dispatch("cartStore/setCartList", getAllItemsCart());
       checkRole(user);
+      
       if (isSuperAdmin.value) {
         return router.push("/admin");
       } 
+
       router.push("/");
     };
 

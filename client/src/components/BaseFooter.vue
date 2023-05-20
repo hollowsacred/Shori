@@ -29,7 +29,9 @@
           <ul class="footer__company">
             <li class="footer__company-item"><a href="#">О компании</a></li>
             <li class="footer__company-item"><a href="#">Новости</a></li>
-            <li class="footer__company-item"><a href="#">Контакты</a></li>
+            <li class="footer__company-item">
+              <a @click="scrollTo('contacts')">Контакты</a>
+            </li>
             <li class="footer__company-item"><a href="#">Вакансии</a></li>
             <li class="footer__company-item">
               <a href="#">Подарочные карты</a>
@@ -62,9 +64,22 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+
 export default {
   setup() {
-    return {};
+    const router = useRouter();
+    const scrollTo = (nameRoute) => {
+      router.push({ name: nameRoute });
+
+      scroll({
+        behavior: 'smooth',
+        top: 0,
+      })
+    }
+
+    
+    return { scrollTo, };
   },
 };
 </script>

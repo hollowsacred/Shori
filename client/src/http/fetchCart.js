@@ -16,6 +16,11 @@ async function getAllItemsCart() {
   return await res.json();
 }
 
+async function getAllItemsCartById(id) {
+  const res = await fetch(`http://localhost:5000/api/cart/${id}`);
+  return await res.json();
+}
+
 async function clearCart(id) {
   const res = await fetch(`http://localhost:5000/api/cart/allclear/${id}`,{
     method:'DELETE',
@@ -32,4 +37,4 @@ async function deleteItemFromCart(id, productId) {
 
 
 
-module.exports = {addItemToCart, getAllItemsCart, clearCart, deleteItemFromCart,};
+module.exports = {addItemToCart, getAllItemsCart, clearCart, deleteItemFromCart, getAllItemsCartById};

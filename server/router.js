@@ -4,6 +4,8 @@ const authConroller = require('./controllers/authConroller');
 const cartController = require('./controllers/cartController');
 const commentsController = require('./controllers/commentsController');
 const usersController = require('./controllers/usersController');
+const contactsController = require('./controllers/contactsController');
+
 // const multer = require('multer');
 
 const router = new Router();
@@ -22,6 +24,8 @@ router.post('/users', usersController.addManager);
 router.delete('/user/:id', usersController.deleteAdmin);
 router.post('/cart', cartController.addItemToCart);
 router.get('/cart', cartController.getAllItemsCart);
+router.get('/cart/:id', cartController.getAllItemsCartById);
 router.delete('/cart/allclear/:id', cartController.clearCart)
 router.delete('/cart/:id/:productId', cartController.deleteItem);
+router.get('/contacts', contactsController.getAllContacts);
 module.exports = router;

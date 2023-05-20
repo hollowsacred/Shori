@@ -29,9 +29,11 @@
 
 <script>
 
-import { ref, toRefs, reactive, computed } from "vue";
+import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import { deleteItemFromCart } from "../http/fetchCart.js";
+import { watch } from "vue";
+import { toRef } from "vue";
 export default {
   props: {
     data: {
@@ -43,10 +45,17 @@ export default {
   },
   setup(props) {
     const store = useStore();
-    const {product, count} = toRefs(props.data);
+    const data = toRef(props, 'data');
+    const count = toRef(data.value, 'count');
+    const product = toRef(data.value, 'product');
     const countRef = ref(count.value);
     const srcImg = `http://localhost:5000/static/${product.value.img}`;
-    const currentUser = computed(() => store.getters['authStore/getCurrentUser']); 
+    
+    const currentUser = computed(() => store.getters['authStore/getCurrentUser']);
+    const prices = computed(() => ({
+      price: product.value.price * countRef.value,
+      oldPrice: product.value.oldPrice * countRef.value,
+    })); 
     
   const deleteItemCart = async () => {
     await deleteItemFromCart(currentUser.value.id, product.value.id)
@@ -55,39 +64,31 @@ export default {
 
     const calculatedPrice = (price) => {
       if (countRef.value === 0) {
-      return  price + 0;
+      return price + 0;
       }
 
       return price * countRef.value
     }
-    const prices = reactive({
-      price:calculatedPrice(props.data.product.price),
-      oldPrice:calculatedPrice(props.data.product.oldPrice),
-    })
 
     const changeCalculatedPrice = (type) => {
       if (type === 'plus') {
         countRef.value++;
-        prices.oldPrice = calculatedPrice(props.data.product.price);
-        prices.price = calculatedPrice(props.data.product.oldPrice);
-        store.commit('cartStore/setCalculatedCartList', {...prices, id: product.value.id});
         return
       }
 
-      countRef.value > 1 ? countRef.value-- : countRef.value;
-      prices.oldPrice = calculatedPrice(props.data.product.price);
-      prices.price = calculatedPrice(props.data.product.oldPrice);
-      store.commit('cartStore/setCalculatedCartList', {...prices, id: product.value.id});
-      
+      countRef.value > 1 ? countRef.value-- : countRef.value; 
     }
 
-    store.commit('cartStore/setCalculatedCartList', {...prices, id: product.value.id});
+    // store.commit('cartStore/setCalculatedCartList', {...prices.value, product: product.value, userId: currentUser.value});
 
-    // watch(countRef, () => {
-    //   store.commit('cartStore/setCalculatedCartList',prices);
-    // })
+    watch(countRef, () => {
+      console.log(prices.value, 'prices');
+      console.log(props.data);
+      console.log(data.value.id, ' я сворую бабки');
+      store.commit('cartStore/setCalculatedCartList',{ count: countRef.value, userId: currentUser.value.id, id: product.value.id});
+    })
 
-    return { props, count, srcImg, product, countRef, calculatedPrice, deleteItemCart, changeCalculatedPrice };
+    return { props, srcImg, countRef, product , calculatedPrice, deleteItemCart, changeCalculatedPrice };
   },
 };
 </script>
