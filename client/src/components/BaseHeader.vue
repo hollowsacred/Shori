@@ -85,7 +85,7 @@ export default {
     };
 
     const navigateToProfile = () => {
-      if (currentUser.value.id !== 2) {
+      if (currentUser.value.id == 1) {
         return
       }
 

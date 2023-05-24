@@ -27,7 +27,7 @@
 <script>
 import { useStore } from 'vuex';
 import { computed,} from "vue";
-import { clearCart } from "../http/fetchCart.js";
+import { clearCart, fetchAddOrder } from "../http/fetchCart.js";
 export default {
   setup() {
     const store = useStore();
@@ -36,6 +36,10 @@ export default {
     const checkList = computed(() => { return store.getters['cartStore/getFilteredCartList'](currentUser.value.id)})
     
     const clearCartHandler = async () => {
+      await fetchAddOrder({
+        userId: currentUser.value.id,
+        cost: totalCost.value,
+      })
       await clearCart(currentUser.value.id)
       store.commit('cartStore/setCartList', []);
       store.commit('cartStore/clearCalculatedCartList');
@@ -51,7 +55,14 @@ export default {
     const oldPrices = computed(() => {
       let oldCosts = 0;
 
-      checkList.value?.forEach((item) => oldCosts += item.product.oldPrice * item.count);
+      checkList.value?.forEach((item) => {
+        if (item.product.oldPrice) {
+          oldCosts += item.product.oldPrice * item.count;
+        }
+        else {
+          oldCosts +=item.product.price * item.count;
+        }
+      }) 
 
       return oldCosts;
     })

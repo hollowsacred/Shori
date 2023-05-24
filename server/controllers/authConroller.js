@@ -39,6 +39,8 @@ class AuthController {
         login: body.login,
         password: body.password,
         email: body.email,
+        name: body.name,
+        gender: body.gender,
         roleId:2,
         basket: {
          create: {

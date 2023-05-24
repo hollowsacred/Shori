@@ -19,13 +19,16 @@
             :rules="[required]"
             type="number"
           ></v-text-field>
-          <v-text-field
-            v-model="dataItem.oldPrice"
-            label="Старая цена"
-            variant="underlined"
-            :rules="[required]"
-            type="number"
+          <v-text-field v-if="hasDiscount"
+          v-model="dataItem.oldPrice"
+          label="Старая цена"
+          variant="underlined"
+          :rules="[required]"
+          type="number"
           ></v-text-field>
+          <v-btn  @click="hasDiscount = true" color="green" v-else>
+            Добавить скидку
+          </v-btn>
         </div>
 
         <v-text-field
@@ -79,12 +82,13 @@ export default {
   },
   setup(props, { emit }) {
     const store = useStore();
+    const hasDiscount = ref(false);
     const dataItem = reactive({
       title: "",
       price: "",
-      oldPrice: "",
+      oldPrice: 0,
       File: [],
-      count:0,
+      count: 0,
       category:'',
       belongs:'',
       description:'',
@@ -117,7 +121,7 @@ export default {
     const formData = new FormData();
     const required = (v) => !!v || "Введите данные";
     const addItem = async () => {
-      if (!dataItem.title || !dataItem.price || !dataItem.oldPrice || !dataItem.belongs || dataItem.File.length == 0) {
+      if (!dataItem.title || !dataItem.price || !dataItem.belongs || dataItem.File.length == 0) {
         return;
       }
 
@@ -137,7 +141,7 @@ export default {
 
       emit("close");
     };
-    return { props, required, dataItem, addItem, itemsCategory, belongsCategory };
+    return { props, required, dataItem, addItem, itemsCategory, belongsCategory, hasDiscount };
   },
 };
 </script>

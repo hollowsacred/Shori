@@ -13,6 +13,7 @@
       <v-text-field
         v-model="regData.password"
         variant="outlined"
+        type="password"
         label="Пароль"
         :rules="[
         v => !!v || 'Field is required'
@@ -26,8 +27,16 @@
         v => !!v || 'Field is required'
       ]"
       ></v-text-field>
+      <v-text-field
+        v-model="regData.name"
+        variant="outlined"
+        label="Имя"
+        :rules="[
+        v => !!v || 'Field is required'
+      ]"
+      ></v-text-field>
       <div class="auth__btns">
-        <v-btn :disabled="!regData.login || !regData.password || !regData.email" @click="tryToReg" color="green" variant="outlined"
+        <v-btn :disabled="!regData.login || !regData.password || !regData.email || !regData.name" @click="tryToReg" color="green" variant="outlined"
           >Зарегистрироваться</v-btn
         >
       </div>
@@ -66,6 +75,8 @@ export default {
       login: "",
       password: "",
       email: "",
+      gender: 'man',
+      name: '',
       role: "user",
     });
     const snackbar = ref(false);

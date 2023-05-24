@@ -35,6 +35,32 @@ async function deleteItemFromCart(id, productId) {
   return await res.json();
 }
 
+async function fetchGetAllOrdersById(id) {
+  const res = await fetch(`http://localhost:5000/api/orders/${id}`);
+
+  return await res.json();
+}
+
+async function fetchAddOrder(order) {
+  const res = await fetch('http://localhost:5000/api/orders', {
+    method:'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body:JSON.stringify(order),
+  })
+
+  return await res.json();
+}
 
 
-module.exports = {addItemToCart, getAllItemsCart, clearCart, deleteItemFromCart, getAllItemsCartById};
+
+module.exports = { 
+  addItemToCart,
+  getAllItemsCart,
+  clearCart,
+  deleteItemFromCart,
+  getAllItemsCartById,
+  fetchGetAllOrdersById,
+  fetchAddOrder 
+};

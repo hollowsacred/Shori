@@ -149,6 +149,33 @@ class CartController {
       })
       res.status(200).json("Товар удален");
   }
+  async getAllOrdersById(req, res) {
+    const { params } = req;
+
+    const orders = await prisma.order.findMany({
+      where: {
+        userId: +params.id,
+      }
+    })
+
+
+    return res.status(200).json(orders);
+  }
+  
+  async addOrder(req, res) {
+    const { body } = req;
+
+    const order = await prisma.order.create({
+      data: {
+        userId: +body.userId,
+        datePurchase: new Date().toISOString(),
+        pickpointId: 1,
+        cost: +body.cost,
+      }
+    })
+    
+    return await res.status(200).json(order);
+  }
 }
 
 module.exports = new CartController();

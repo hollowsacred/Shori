@@ -21,10 +21,24 @@ const fetcthAddManager = async (data) => {
   return await res.json();
 }
 
+const fetchChangeUserProperty = async (property) => {
+  const res = await fetch ('http://localhost:5000/api/users/change', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(property),
+  });
+
+  console.log(property);
+  return await res.json();
+}
+
 
 
 export {
   fetchGetAllManagers,
   fetchDeleteAdmin,
   fetcthAddManager,
+  fetchChangeUserProperty,
 }

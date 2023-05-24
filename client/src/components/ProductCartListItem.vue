@@ -13,7 +13,7 @@
     <div class="productcart-item-block">
       <div class="productcart-item__prices">
         <div class="price">{{ calculatedPrice(product.price) }}<span>Руб.</span></div>
-        <div class="old-price">{{ calculatedPrice(product.oldPrice)}}<span>Руб</span></div>
+        <div v-if="product.oldPrice" class="old-price">{{ calculatedPrice(product.oldPrice)}}<span>Руб</span></div>
       </div>
       <div class="d-flex align-center justify-center counts mt-4">
         <v-btn  @click="changeCalculatedPrice()" density="compact" variant="outlined" height="30"><v-icon>mdi-minus</v-icon></v-btn>

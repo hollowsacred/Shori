@@ -40,11 +40,11 @@ export default {
     }
   })
 
-  // const closedRoutes = ['check', 'cart']
+  const closedRoutes = ['check', 'cart', 'profile'];
 
   router.beforeEach((to) => {
     console.log(to.name);
-    if (to.name === 'check' && currentUser.value.id === 4) {
+    if (closedRoutes.includes(to.name) && currentUser.value.id === 4) {
       router.push('/');
     }
   })

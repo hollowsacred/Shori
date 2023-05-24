@@ -11,7 +11,7 @@
         <div class="product-list__item-body">
           <div class="product-list__item-prices">
             <div class="product-list__item-price">{{ dataItem.price }} Руб</div>
-            <div class="product-list__item-price product-list__item-price--old">
+            <div v-show="dataItem.oldPrice" class="product-list__item-price product-list__item-price--old">
               {{ dataItem.oldPrice }} Руб
             </div>
           </div>
@@ -116,14 +116,14 @@ export default {
       if (type.value) {
         store.commit("homeStore/changeItem", {
           item: dataItem.value,
-          changedItem: changedItem,
+          changedItem: {...changedItem, oldPrice: +changedItem.oldPrice},
           type: type.value,
         });
       } else {
         await changeItemProduct(changedItem)
         store.commit("productStore/changeItem", {
           item: dataItem.value,
-          changedItem: changedItem,
+          changedItem: {...changedItem, oldPrice: +changedItem.oldPrice},
         });
       }
     };

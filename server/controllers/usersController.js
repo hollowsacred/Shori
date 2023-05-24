@@ -70,6 +70,20 @@ class UsersController {
 
     return res.status(200).json('Администратор удален');
   }
+  async changeUserProperty(req, res) {
+    const { body } = req;
+    // const property = body.property;
+    await prisma.user.update({
+      where: {
+        id: +body.userId,
+      },
+      data: {
+        [body.field]: body.data,
+      }
+    })
+
+    return res.status(200).json('Поле обновлено');
+  }
 }
 
 module.exports = new UsersController();

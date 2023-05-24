@@ -1,8 +1,8 @@
 <template>
   <div class="order-item mb-5">
     <div class="order-item-body">
-      <div class="order-item-body__date text-h6">Заказ от {{ order.datePurchase }}</div>
-      <div class="order-item-body__price">{{ order.price }} руб.</div>
+      <div class="order-item-body__date text-h6">Заказ от {{ convertDate(order.datePurchase) }}</div>
+      <div class="order-item-body__price">{{ order.cost }} руб.</div>
       <div class="order-item-body__status ">Выполнен</div>
     </div>
     <div class="order-item__arrow"></div>
@@ -19,8 +19,15 @@ export default {
   },
   setup () {
     
+    const convertDate = (date) => {
+      return new Date(date).toLocaleDateString('ru',{
+        year:'numeric',
+        month: 'long',
+        day:'numeric',
+      });
+    };
 
-    return {}
+    return { convertDate }
   }
 }
 </script>
