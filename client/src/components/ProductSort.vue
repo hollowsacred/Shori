@@ -28,7 +28,7 @@ export default {
     const store = useStore();
     const sort = ref([0]);
     const productSorts = ref([
-      "По популярности",
+      "Без сортировки",
       "По убыванию",
       "По возрастанию",
     ]);
